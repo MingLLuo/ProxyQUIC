@@ -1,0 +1,4 @@
+{
+  "description": "A simple HTTP proxy",
+  "proxy_address": "127.0.0.1:8082"
+}

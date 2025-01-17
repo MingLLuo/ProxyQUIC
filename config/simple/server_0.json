@@ -1,0 +1,5 @@
+{
+  "description": "Server 0, connected by Client 0",
+  "server_address": "127.0.0.1:8080",
+  "use_https": false
+}
