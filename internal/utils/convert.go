@@ -3,21 +3,20 @@ package utils
 import (
 	"fmt"
 	"net"
-	"strconv"
 	"strings"
 )
 
 // SplitHostPort Convert IP address to host(string) and port(int, if exists)
 func SplitHostPort(addr string) (string, int, error) {
-	host, port, err := net.SplitHostPort(addr)
+	host, portStr, err := net.SplitHostPort(addr)
 	if err != nil {
 		return "", 0, fmt.Errorf("split address error: %w", err)
 	}
-	port_, err := strconv.Atoi(port)
+	portInt, err := net.LookupPort("tcp", portStr)
 	if err != nil {
-		return "", 0, fmt.Errorf("convert port to int error: %w", err)
+		return "", 0, fmt.Errorf("lookup port error: %w", err)
 	}
-	return host, port_, nil
+	return host, portInt, nil
 }
 
 // NormalizeAddress Normalize address with head
