@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"quic-proxy/internal/config"
+	h2h3_server "quic-proxy/internal/h2h3-server"
 	simple_server "quic-proxy/internal/simple-server"
 	"quic-proxy/internal/utils"
 )
@@ -11,6 +12,7 @@ import (
 func main() {
 	// Command line flags: -mode=simple / -mode=advanced / -mode=h2h3
 	mode := flag.String("mode", "simple", "simple/advanced/h2h3")
+	flag.Parse()
 
 	cfg, err := config.LoadServerConfig(utils.ConfigPathCreate(*mode, "server", 0))
 	if err != nil {
@@ -24,7 +26,10 @@ func main() {
 			log.Fatalf("failed to start server: %v", err)
 		}
 	} else if *mode == "h2h3" {
-
+		err := h2h3_server.StartServer(cfg.Http2Addr, cfg.Http3Addr)
+		if err != nil {
+			log.Fatalf("failed to start server: %v", err)
+		}
 	} else {
 		log.Fatalf("unsupport mode: %s", *mode)
 	}

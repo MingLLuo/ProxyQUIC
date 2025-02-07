@@ -1,0 +1,6 @@
+{
+  "description": "Server 0, With H2H3",
+  "http2_address": "127.0.0.1:8080",
+  "http3_address": "127.0.0.1:8081",
+  "use_https": false
+}

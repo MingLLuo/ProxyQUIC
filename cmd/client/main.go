@@ -9,10 +9,9 @@ import (
 )
 
 func main() {
-	mode := flag.String("mode", "simple", "simple or advanced")
-	if *mode != "simple" && *mode != "advanced" {
-		log.Fatalf("invalid mode: %s", *mode)
-	}
+	mode := flag.String("mode", "simple", "simple/h2h3/advanced")
+	flag.Parse()
+
 	cfg, err := config.LoadClientConfig(utils.ConfigPathCreate(*mode, "client", 0))
 	if err != nil {
 		log.Fatalf("failed to load client config: %v", err)
@@ -24,8 +23,10 @@ func main() {
 		if err != nil {
 			log.Fatalf("failed to start client: %v", err)
 		}
+	} else if *mode == "h2h3" {
+		log.Fatalf("h2h3 mode is not supported in client")
 	} else {
-		// TODO: Start advanced client
+		log.Fatalf("unsupported mode: %s", *mode)
 	}
 
 }
