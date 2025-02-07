@@ -11,7 +11,6 @@ type ClientConfig struct {
 	Description   string `json:"description"`
 	ClientAddr    string `json:"client_address"`
 	ServerAddr    string `json:"server_address"`
-	ProxyAddr     string `json:"proxy_address"`
 	ClientMessage string `json:"client_message"`
 	UseHTTPS      bool   `json:"use_https"`
 }

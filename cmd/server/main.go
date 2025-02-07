@@ -9,11 +9,8 @@ import (
 )
 
 func main() {
-	// Command line flags: -mode=simple / -mode=advanced
-	mode := flag.String("mode", "simple", "simple or advanced")
-	if *mode != "simple" && *mode != "advanced" {
-		log.Fatalf("invalid mode: %s", *mode)
-	}
+	// Command line flags: -mode=simple / -mode=advanced / -mode=h2h3
+	mode := flag.String("mode", "simple", "simple/advanced/h2h3")
 
 	cfg, err := config.LoadServerConfig(utils.ConfigPathCreate(*mode, "server", 0))
 	if err != nil {
@@ -26,7 +23,9 @@ func main() {
 		if err != nil {
 			log.Fatalf("failed to start server: %v", err)
 		}
+	} else if *mode == "h2h3" {
+
 	} else {
-		// TODO: Start advanced server
+		log.Fatalf("unsupport mode: %s", *mode)
 	}
 }
