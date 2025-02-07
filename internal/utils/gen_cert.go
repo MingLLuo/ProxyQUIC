@@ -31,6 +31,19 @@ type TLSCertificateGenerator struct {
 	KeyPath    string        // Private key File Path
 }
 
+// default Generator
+var DefaultTLSCertificateGenerator = &TLSCertificateGenerator{
+	Host:       "localhost,127.0.0.1",
+	ValidFrom:  "",
+	ValidFor:   365 * 24 * time.Hour,
+	IsCA:       false,
+	RsaBits:    2048,
+	EcdsaCurve: "P256",
+	Ed25519Key: false,
+	CertPath:   "cert.pem",
+	KeyPath:    "key.pem",
+}
+
 func (t *TLSCertificateGenerator) Generate() error {
 	if t.Host == "" {
 		return errors.New("Missing required hostname")
