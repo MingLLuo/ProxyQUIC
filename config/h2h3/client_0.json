@@ -1,0 +1,6 @@
+{
+  "description": "Client 0, With h2 address given, will redirect to h3",
+  "client_address": "127.0.0.1:9000",
+  "server_address": "127.0.0.1:8080",
+  "client_message": "Hello, I'm client!"
+}

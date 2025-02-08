@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"quic-proxy/internal/config"
+	h2h3_client "quic-proxy/internal/h2h3-client"
 	simple_client "quic-proxy/internal/simple-client"
 	"quic-proxy/internal/utils"
 )
@@ -19,14 +20,14 @@ func main() {
 
 	log.Printf(cfg.Description)
 	if *mode == "simple" {
-		err := simple_client.DoClientRequest(cfg.ClientAddr, cfg.ServerAddr, cfg.ClientMessage)
-		if err != nil {
-			log.Fatalf("failed to start client: %v", err)
-		}
+		err = simple_client.DoClientRequest(cfg.ClientAddr, cfg.ServerAddr, cfg.ClientMessage)
 	} else if *mode == "h2h3" {
-		log.Fatalf("h2h3 mode is not supported in client")
+		err = h2h3_client.DoClientRequest(cfg.ClientAddr, cfg.ServerAddr, cfg.ClientMessage)
 	} else {
 		log.Fatalf("unsupported mode: %s", *mode)
+	}
+	if err != nil {
+		log.Fatalf("failed to start client: %v", err)
 	}
 
 }
