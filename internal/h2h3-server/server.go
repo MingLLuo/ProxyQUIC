@@ -9,6 +9,7 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
+	"os"
 	"quic-proxy/internal/utils"
 
 	"github.com/quic-go/quic-go"
@@ -19,8 +20,10 @@ import (
 )
 
 const (
-	certPath = "internal/h2h3-server/cert.pem"
-	keyPath  = "internal/h2h3-server/key.pem"
+	//certPath = "internal/h2h3-server/cert.pem"
+	//keyPath  = "internal/h2h3-server/key.pem"
+	certPath = "cert.pem"
+	keyPath  = "key.pem"
 )
 
 func StartServer(h2Addr string, h3Addr string) error {
@@ -56,7 +59,8 @@ func StartH2Server(h2Addr, h3Addr string) error {
 	}
 	var altSvc []string
 	altSvc = append(altSvc, fmt.Sprintf(`h3=":%d";ma=2592000`, h3PortInt))
-
+	// current Path
+	log.Printf("Current Path: %s", os.Getenv("PWD"))
 	cert, err := tls.LoadX509KeyPair(certPath, keyPath)
 	if err != nil {
 		log.Fatalf("Failed to load certificate: %v", err)
@@ -66,6 +70,14 @@ func StartH2Server(h2Addr, h3Addr string) error {
 		NextProtos:   []string{"h2", "h3"},
 	}
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Proto == "HTTP/2.0" {
+			log.Printf("[h2Server] HTTP/2 Protocol used")
+		} else {
+			log.Printf("[h2Server] Not using HTTP/2, Protocol: %s", r.Proto)
+			http.Error(w, "This server only supports HTTP/2", http.StatusUpgradeRequired)
+			return
+		}
+
 		// Add Alt-Svc header, remind Client Can use H3
 		w.Header().Set("Alt-Svc", strings.Join(altSvc, ","))
 
@@ -80,7 +92,7 @@ func StartH2Server(h2Addr, h3Addr string) error {
 		TLSConfig: tlsConfig,
 	}
 	log.Println("Starting HTTP/2 server on ", h2Addr)
-	return httpServer.ListenAndServe()
+	return httpServer.ListenAndServeTLS(certPath, keyPath)
 }
 
 func StartH3Server(serverAddress string) error {
@@ -118,7 +130,7 @@ func generatePRData(l int) []byte {
 
 func setupHandler(www string) http.Handler {
 	mux := http.NewServeMux()
-	
+
 	if len(www) > 0 {
 		mux.Handle("/", http.FileServer(http.Dir(www)))
 	} else {

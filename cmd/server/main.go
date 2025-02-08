@@ -21,16 +21,13 @@ func main() {
 
 	log.Printf(cfg.Description)
 	if *mode == "simple" {
-		err := simple_server.StartServer(cfg.ServerAddr)
-		if err != nil {
-			log.Fatalf("failed to start server: %v", err)
-		}
+		err = simple_server.StartServer(cfg.ServerAddr)
 	} else if *mode == "h2h3" {
-		err := h2h3_server.StartServer(cfg.Http2Addr, cfg.Http3Addr)
-		if err != nil {
-			log.Fatalf("failed to start server: %v", err)
-		}
+		err = h2h3_server.StartServer(cfg.Http2Addr, cfg.Http3Addr)
 	} else {
 		log.Fatalf("unsupport mode: %s", *mode)
+	}
+	if err != nil {
+		log.Fatalf("failed to start server: %v", err)
 	}
 }
