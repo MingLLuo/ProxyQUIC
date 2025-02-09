@@ -44,7 +44,7 @@ func HandleRequestAndRedirect(w http.ResponseWriter, req *http.Request) {
 	// 测试一下 Alt-svc的标头自定义
 	w.Header().Add("Alt-Svc", "quic=\":443\"")
 	// 关闭 HTTP 的长连接
-	//w.Header().Set("Connection", "close")
+	// w.Header().Set("Connection", "close")
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
 

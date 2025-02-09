@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"quic-proxy/internal/utils"
 	"time"
+
+	"quic-proxy/internal/utils"
 )
 
 func main() {

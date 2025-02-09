@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+
 	"quic-proxy/internal/config"
 	h2h3_client "quic-proxy/internal/h2h3-client"
 	simple_client "quic-proxy/internal/simple-client"
@@ -29,5 +30,4 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to start client: %v", err)
 	}
-
 }

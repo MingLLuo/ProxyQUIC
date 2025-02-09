@@ -5,20 +5,22 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"github.com/ebi-yade/altsvc-go"
-	"github.com/quic-go/quic-go"
-	"github.com/quic-go/quic-go/http3"
-	"github.com/quic-go/quic-go/qlog"
-	"golang.org/x/net/context"
-	"golang.org/x/net/http2"
 	"log"
 	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
-	"quic-proxy/internal/utils"
 	"time"
+
+	"github.com/ebi-yade/altsvc-go"
+	"github.com/quic-go/quic-go"
+	"github.com/quic-go/quic-go/http3"
+	"github.com/quic-go/quic-go/qlog"
+	"golang.org/x/net/context"
+	"golang.org/x/net/http2"
+
+	"quic-proxy/internal/utils"
 )
 
 func DoClientRequest(clientAddress, serverAddress, message string) error {
@@ -108,12 +110,12 @@ func DoClientRequest(clientAddress, serverAddress, message string) error {
 }
 
 func RetryClientRequestInH3(h3ServerAddr, message string) error {
-	//Certain HTTP implementations use the client address for logging or
-	//access-control purposes. Since a QUIC client's address might change during a
-	//connection (and future versions might support simultaneous use of multiple
-	//addresses), such implementations will need to either actively retrieve the
-	//client's current address or addresses when they are relevant or explicitly
-	//accept that the original address might change.
+	// Certain HTTP implementations use the client address for logging or
+	// access-control purposes. Since a QUIC client's address might change during a
+	// connection (and future versions might support simultaneous use of multiple
+	// addresses), such implementations will need to either actively retrieve the
+	// client's current address or addresses when they are relevant or explicitly
+	// accept that the original address might change.
 
 	caCert, err := os.ReadFile("cert.pem")
 	if err != nil {

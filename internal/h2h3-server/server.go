@@ -10,18 +10,19 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
+
 	"quic-proxy/internal/utils"
 
 	"github.com/quic-go/quic-go"
 	"github.com/quic-go/quic-go/http3"
 	"github.com/quic-go/quic-go/qlog"
-	"strconv"
-	"strings"
 )
 
 const (
-	//certPath = "internal/h2h3-server/cert.pem"
-	//keyPath  = "internal/h2h3-server/key.pem"
+	// certPath = "internal/h2h3-server/cert.pem"
+	// keyPath  = "internal/h2h3-server/key.pem"
 	certPath = "cert.pem"
 	keyPath  = "key.pem"
 )

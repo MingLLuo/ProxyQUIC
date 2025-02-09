@@ -5,12 +5,13 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
-	"golang.org/x/net/http2"
 	"log"
 	"net/http"
 	"os"
 	"testing"
 	"time"
+
+	"golang.org/x/net/http2"
 )
 
 func TestStartH2Server(t *testing.T) {
@@ -53,5 +54,4 @@ func TestStartH2Server(t *testing.T) {
 	if err := h2Server.Shutdown(ctx); err != nil {
 		t.Errorf("h2Server.Shutdown() error = %v", err)
 	}
-
 }

@@ -9,8 +9,9 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"quic-proxy/internal/utils"
 	"time"
+
+	"quic-proxy/internal/utils"
 )
 
 // DoClientRequest 发起一次简单的 HTTP 请求，发送 message 到 server
