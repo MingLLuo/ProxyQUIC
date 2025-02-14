@@ -1,4 +1,4 @@
-package h2h3_server
+package h1h3_server
 
 import (
 	"crypto/md5"
@@ -21,13 +21,13 @@ import (
 )
 
 const (
-	// certPath = "internal/h2h3-server/cert.pem"
-	// keyPath  = "internal/h2h3-server/key.pem"
+	// certPath = "internal/h1h3-server/cert.pem"
+	// keyPath  = "internal/h1h3-server/key.pem"
 	certPath = "cert.pem"
 	keyPath  = "key.pem"
 )
 
-func StartServer(h2Addr string, h3Addr string) error {
+func StartServer(h1Addr string, h3Addr string) error {
 	// Generate cert first
 	certGenerator := utils.DefaultTLSCertificateGenerator
 	certGenerator.CertPath = certPath
@@ -42,18 +42,18 @@ func StartServer(h2Addr string, h3Addr string) error {
 		log.Fatalf("Failed to load certificate: %v", err)
 	}
 
-	// Start H2 server, empty handler, only Alt-svc header set
+	// Start H1 server, empty handler, only Alt-svc header set
 	go func() {
-		err := StartH2Server(h2Addr, h3Addr)
+		err := StartH1Server(h1Addr, h3Addr)
 		if err != nil {
-			log.Fatalf("Failed to start H2 server: %v", err)
+			log.Fatalf("Failed to start H1 server: %v", err)
 		}
 	}()
 	// Start H3 server
 	return StartH3Server(h3Addr)
 }
 
-func StartH2Server(h2Addr, h3Addr string) error {
+func StartH1Server(h1Addr, h3Addr string) error {
 	_, h3PortInt, err := utils.SplitHostPort(h3Addr)
 	if err != nil {
 		log.Fatalf("Failed to split h3Addr: %v", err)
@@ -68,31 +68,31 @@ func StartH2Server(h2Addr, h3Addr string) error {
 	}
 	tlsConfig := &tls.Config{
 		Certificates: []tls.Certificate{cert},
-		NextProtos:   []string{"h2", "h3"},
+		NextProtos:   []string{"h1", "h3"},
 	}
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Proto == "HTTP/2.0" {
-			log.Printf("[h2Server] HTTP/2 Protocol used")
+		if r.Proto == "HTTP/1.1" {
+			log.Printf("[h1Server] HTTP/1.1 Protocol used")
 		} else {
-			log.Printf("[h2Server] Not using HTTP/2, Protocol: %s", r.Proto)
-			http.Error(w, "This server only supports HTTP/2", http.StatusUpgradeRequired)
+			log.Printf("[h1Server] Not using HTTP/1.1, Protocol: %s", r.Proto)
+			http.Error(w, "This server only supports HTTP/1.1", http.StatusUpgradeRequired)
 			return
 		}
 
 		// Add Alt-Svc header, remind Client Can use H3
 		w.Header().Set("Alt-Svc", strings.Join(altSvc, ","))
 
-		log.Printf("[h2Server] Request From: %s", r.RemoteAddr)
-		responseMsg := fmt.Sprint("This is a HTTP/2 Server, try use HTTP/3")
+		log.Printf("[h1Server] Request From: %s", r.RemoteAddr)
+		responseMsg := fmt.Sprint("This is a HTTP/1.1 Server, try use HTTP/3")
 		w.Write([]byte(responseMsg))
 	})
 
 	httpServer := &http.Server{
-		Addr:      h2Addr,
+		Addr:      h1Addr,
 		Handler:   handler,
 		TLSConfig: tlsConfig,
 	}
-	log.Println("Starting HTTP/2 server on ", h2Addr)
+	log.Println("Starting HTTP/1.1 server on ", h1Addr)
 	return httpServer.ListenAndServeTLS(certPath, keyPath)
 }
 

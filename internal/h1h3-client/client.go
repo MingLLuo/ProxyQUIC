@@ -1,4 +1,4 @@
-package h2h3_client
+package h1h3_client
 
 import (
 	"bytes"
@@ -18,8 +18,6 @@ import (
 	"github.com/quic-go/quic-go/http3"
 	"github.com/quic-go/quic-go/qlog"
 	"golang.org/x/net/context"
-	"golang.org/x/net/http2"
-
 	"quic-proxy/internal/utils"
 )
 
@@ -53,14 +51,9 @@ func DoClientRequest(clientAddress, serverAddress, message string) error {
 			log.Printf("[DEBUG] Connecting directly to: %s", addr)
 			return dialer.DialContext(ctx, network, addr)
 		},
-		ForceAttemptHTTP2: true,
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true,
 		},
-	}
-	err = http2.ConfigureTransport(transport)
-	if err != nil {
-		return fmt.Errorf("failed to configure transport: %w", err)
 	}
 	client := &http.Client{
 		Transport: transport,

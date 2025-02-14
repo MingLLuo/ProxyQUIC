@@ -1,4 +1,4 @@
-package h2h3_server
+package h1h3_server
 
 import (
 	"context"
@@ -10,14 +10,12 @@ import (
 	"os"
 	"testing"
 	"time"
-
-	"golang.org/x/net/http2"
 )
 
-func TestStartH2Server(t *testing.T) {
+func TestStartH1Server(t *testing.T) {
 	go func() {
-		if err := StartH2Server("localhost:8080", "localhost:8081"); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			t.Errorf("StartH2Server() error = %v", err)
+		if err := StartH1Server("localhost:8080", "localhost:8081"); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			t.Errorf("StartH1Server() error = %v", err)
 		}
 	}()
 	time.Sleep(1 * time.Second)
@@ -28,7 +26,7 @@ func TestStartH2Server(t *testing.T) {
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCert)
 	client := &http.Client{
-		Transport: &http2.Transport{
+		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
 				RootCAs: caCertPool,
 			},
@@ -36,22 +34,22 @@ func TestStartH2Server(t *testing.T) {
 	}
 	resp, err := client.Get("https://localhost:8080")
 	if err != nil {
-		log.Fatalf("Failed to make HTTP/2 request: %v", err)
+		log.Fatalf("Failed to make HTTP/1.1 request: %v", err)
 	}
 	defer resp.Body.Close()
 
-	if resp.Proto == "HTTP/2.0" {
-		log.Println("Server responded with HTTP/2")
+	if resp.Proto == "HTTP/1.1" {
+		log.Println("Server responded with HTTP/1.1")
 	} else {
-		t.Fatalf("Server did not respond with HTTP/2, got: %v", resp.Proto)
+		t.Fatalf("Server did not respond with HTTP/1.1, got: %v", resp.Proto)
 	}
 
-	h2Server := http.Server{
+	h1Server := http.Server{
 		Addr: "localhost:8080",
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
-	if err := h2Server.Shutdown(ctx); err != nil {
-		t.Errorf("h2Server.Shutdown() error = %v", err)
+	if err := h1Server.Shutdown(ctx); err != nil {
+		t.Errorf("h1Server.Shutdown() error = %v", err)
 	}
 }

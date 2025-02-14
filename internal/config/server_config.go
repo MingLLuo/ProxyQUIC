@@ -10,7 +10,6 @@ import (
 type ServerConfig struct {
 	Description string `json:"description"`
 	ServerAddr  string `json:"server_address"`
-	Http2Addr   string `json:"http2_address"`
 	Http3Addr   string `json:"http3_address"`
 	UseHTTPS    bool   `json:"use_https"`
 }
